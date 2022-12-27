@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,8 @@ public class ReferenceTest {
 //        System.in.read();
         // Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
 //        soft();
-        softQueue();
+//        softQueue();
+        weakReference();
     }
 
     private static void soft() throws IOException {
@@ -87,6 +89,48 @@ public class ReferenceTest {
          * Disconnected from the target VM, address: '127.0.0.1:64819', transport: 'socket'
          *
          * Process finished with exit code 0
+         */
+    }
+
+    /**
+     * 弱引用
+     */
+    private static void weakReference(){
+        List<WeakReference<byte[]>> list = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            WeakReference<byte[]> weakReference = new WeakReference<>(new byte[SIZE]);
+            System.out.println(weakReference.get());
+            list.add(weakReference);
+        }
+
+        System.out.println("=============>");
+        for (WeakReference<byte[]> weakReference : list) {
+            System.out.println(weakReference.get());
+        }
+        /**
+         * [B@3b192d32
+         * [B@16f65612
+         * [B@311d617d
+         * [GC (Allocation Failure) [PSYoungGen: 2291K->488K(6144K)] 14579K->13080K(19968K), 0.0025767 secs] [Times: user=0.00 sys=0.00, real=0.02 secs]
+         * [B@7c53a9eb
+         * [GC (Allocation Failure) [PSYoungGen: 4696K->504K(6144K)] 17288K->13120K(19968K), 0.0007950 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
+         * [B@ed17bee
+         * =============>
+         * [B@3b192d32
+         * [B@16f65612
+         * [B@311d617d
+         * null
+         * [B@ed17bee
+         * Heap
+         *  PSYoungGen      total 6144K, used 4768K [0x00000000ff980000, 0x0000000100000000, 0x0000000100000000)
+         *   eden space 5632K, 75% used [0x00000000ff980000,0x00000000ffdaa2f0,0x00000000fff00000)
+         *   from space 512K, 98% used [0x00000000fff80000,0x00000000ffffe010,0x0000000100000000)
+         *   to   space 512K, 0% used [0x00000000fff00000,0x00000000fff00000,0x00000000fff80000)
+         *  ParOldGen       total 13824K, used 12616K [0x00000000fec00000, 0x00000000ff980000, 0x00000000ff980000)
+         *   object space 13824K, 91% used [0x00000000fec00000,0x00000000ff852030,0x00000000ff980000)
+         *  Metaspace       used 3045K, capacity 4486K, committed 4864K, reserved 1056768K
+         *   class space    used 322K, capacity 386K, committed 512K, reserved 1048576K
          */
     }
 }
